@@ -1,24 +1,57 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import TableData from "./components/TableData";
+import UpdateUser from "./components/UpdateUser";
+import "./style.css";
 
 function App() {
+  // because we need in both component tabledata and updateuser
+
+  const [user, setUser] = useState({
+    name: "", // Initial name
+    email: "", // Initial email
+  });
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleLogin = (name,email)=>{
+    setUser({name,email});
+  }
+
+
+  const handleUpdateUser = (updatedName, updatedEmail) => {
+    setUser({
+      name: updatedName,
+      email: updatedEmail,
+    });
+    setIsEditing(false);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+  
+      <Router>
+        <div className="container">
+          <Routes>
+            <Route path="/" element={<Register/>} />
+            <Route path="/login" element={<Login onLogin={handleLogin}/>} />
+            <Route path="/tabledata" element={isEditing ? (
+                <UpdateUser
+                  name={user.name}
+                  email={user.email}
+                  setIsEditing={setIsEditing}
+                  onUpdateUser={handleUpdateUser}
+                />
+              ) : (
+                <TableData
+                  user={user}
+                  setIsEditing={setIsEditing}
+                />
+              )} />
+          </Routes>
+        </div>
+      </Router>
   );
 }
 
